@@ -1,0 +1,18 @@
+import "tfplan/v2" as tfplan
+
+allStorageAccounts = filter tfplan.resource_changes as _, resource_changes {
+	resource_changes.mode is "managed" and
+		resource_changes.type is "azurerm_storage_account" and
+		(resource_changes.change.actions contains "create" or
+			resource_changes.change.actions is ["update"])
+}
+
+min_tls_version_is_tls1_2 = rule {
+	all allStorageAccounts as _, accounts {
+		accounts.change.after.min_tls_version is "TLS1_2"
+	}
+}
+
+main = rule {
+	min_tls_version_is_tls1_2
+}
