@@ -1,0 +1,22 @@
+import "tfplan/v2" as tfplan
+
+allowedLocations = [
+    "swedencentral",
+    "westeurope",
+    "northeurope"
+]
+
+allAzureResources = filter tfplan.resource_changes as _, resource_changes {
+    resource_changes.provider_name is "registry.terraform.io/hashicorp/azurerm" and
+    resource_changes.change.actions contains "create"
+}
+
+locationsAreAllowed = rule {
+    all allAzureResources as _, azureResources {
+        azureResources.change.after.location in allowedLocations
+    }
+}
+
+main = rule {
+	locationsAreAllowed
+}
