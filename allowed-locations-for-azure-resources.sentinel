@@ -1,10 +1,6 @@
 import "tfplan/v2" as tfplan
 
-allowedLocations = [
-    "swedencentral",
-    "westeurope",
-    "northeurope"
-]
+allowedLocations = ["swedencentral", "westeurope", "northeurope"]
 
 allAzureResources = filter tfplan.resource_changes as _, resource_changes {
     resource_changes.provider_name is "registry.terraform.io/hashicorp/azurerm" and
